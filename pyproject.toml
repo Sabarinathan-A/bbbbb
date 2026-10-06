@@ -1,0 +1,29 @@
+# NOTE: no [build-system] table is declared on purpose.
+#
+# This sandbox cannot reach PyPI and has no 'wheel' package, so the modern
+# PEP 517/660 build path fails on 'bdist_wheel'. Omitting [build-system] lets
+# pip fall back to the legacy 'setup.py develop' editable install (see setup.py
+# / setup.cfg), which only needs the already-present setuptools.
+#
+# The [project] table below is the canonical project metadata. In this offline
+# sandbox the legacy install actually reads the mirrored values from setup.cfg
+# (setuptools 59.6.0 does not consume [project] during 'setup.py develop'); the
+# two are kept in sync. In a normal environment setuptools reads this table.
+
+[project]
+name = "attackpath"
+version = "0.1.0"
+description = "AttackPath Engine: reconstructs attack paths from JSON scenario data, computes root cause and blast radius, and evaluates remediations."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "networkx>=3.2",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4",
+]
+
+[tool.setuptools.packages.find]
+include = ["attackpath*"]
