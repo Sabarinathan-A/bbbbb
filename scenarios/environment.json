@@ -1,0 +1,118 @@
+{
+  "synthetic": true,
+  "description": "Nimbus synthetic environment graph (PRD section 9.2). Directed edges each carry a 'permission' and an 'actions' list. Token nodes carry a 'revoked' flag. Resource nodes carry a 'sensitivity' attribute.",
+  "nodes": [
+    {
+      "id": "priya.s",
+      "type": "identity",
+      "display_name": "Priya S.",
+      "role": "support_engineer",
+      "sensitivity": "normal"
+    },
+    {
+      "id": "tok-9f2",
+      "type": "token",
+      "token_kind": "session",
+      "revoked": false,
+      "bound_to_device": false,
+      "sensitivity": "normal"
+    },
+    {
+      "id": "oauth-77",
+      "type": "token",
+      "token_kind": "oauth",
+      "revoked": false,
+      "scopes": ["orders:*", "payments:admin"],
+      "sensitivity": "high"
+    },
+    {
+      "id": "helpdeskpro",
+      "type": "application",
+      "display_name": "HelpdeskPro",
+      "sensitivity": "normal"
+    },
+    {
+      "id": "orders-api",
+      "type": "api",
+      "display_name": "Orders API",
+      "category": "financial_api",
+      "sensitivity": "normal"
+    },
+    {
+      "id": "payments-svc",
+      "type": "service",
+      "display_name": "Payments Service",
+      "category": "financial_api",
+      "sensitivity": "high"
+    },
+    {
+      "id": "customers-db",
+      "type": "datastore",
+      "display_name": "Customers DB",
+      "category": "customer_data",
+      "sensitivity": "high"
+    },
+    {
+      "id": "crm",
+      "type": "application",
+      "display_name": "CRM",
+      "sensitivity": "normal"
+    },
+    {
+      "id": "email",
+      "type": "application",
+      "display_name": "Email",
+      "sensitivity": "normal"
+    }
+  ],
+  "edges": [
+    {
+      "source": "priya.s",
+      "target": "tok-9f2",
+      "permission": "owns",
+      "actions": ["own"]
+    },
+    {
+      "source": "tok-9f2",
+      "target": "helpdeskpro",
+      "permission": "app:access",
+      "actions": ["access", "login"]
+    },
+    {
+      "source": "helpdeskpro",
+      "target": "oauth-77",
+      "permission": "oauth:issue",
+      "actions": ["issue", "create_token"]
+    },
+    {
+      "source": "oauth-77",
+      "target": "orders-api",
+      "permission": "orders:*",
+      "actions": ["read", "write", "api_call"]
+    },
+    {
+      "source": "oauth-77",
+      "target": "payments-svc",
+      "permission": "payments:admin",
+      "actions": ["admin", "refund", "privileged_call"]
+    },
+    {
+      "source": "payments-svc",
+      "target": "customers-db",
+      "permission": "db:read",
+      "actions": ["read", "db_query"]
+    },
+    {
+      "source": "priya.s",
+      "target": "crm",
+      "permission": "crm:read",
+      "actions": ["read"]
+    },
+    {
+      "source": "priya.s",
+      "target": "email",
+      "permission": "email:read",
+      "actions": ["read"]
+    }
+  ]
+}
