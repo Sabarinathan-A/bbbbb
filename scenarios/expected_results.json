@@ -1,0 +1,77 @@
+{
+  "synthetic": true,
+  "description": "Canonical expected outputs for the Nimbus scenario. These are the exact, non-negotiable numbers the test suite asserts against.",
+  "correlation": {
+    "suspicious_group_count": 1,
+    "suspicious_group_event_ids": [
+      "evt-0004",
+      "evt-0005",
+      "evt-0006",
+      "evt-0007",
+      "evt-0008",
+      "evt-0009",
+      "evt-0010"
+    ],
+    "excluded_noise_identities": ["ravi.k", "anita.m"]
+  },
+  "attack_path": {
+    "step_count": 7,
+    "steps": [
+      {"step": 1, "event_id": "evt-0004", "stage": "initial_compromise"},
+      {"step": 2, "event_id": "evt-0005", "stage": "token_abuse"},
+      {"step": 3, "event_id": "evt-0006", "stage": "application_access"},
+      {"step": 4, "event_id": "evt-0007", "stage": "token_created"},
+      {"step": 5, "event_id": "evt-0008", "stage": "api_access"},
+      {"step": 6, "event_id": "evt-0009", "stage": "privilege_escalation"},
+      {"step": 7, "event_id": "evt-0010", "stage": "data_access"}
+    ],
+    "stage_order": [
+      "initial_compromise",
+      "token_abuse",
+      "application_access",
+      "token_created",
+      "api_access",
+      "privilege_escalation",
+      "data_access"
+    ]
+  },
+  "root_cause": {
+    "identity": "priya.s",
+    "credential": "tok-9f2",
+    "contributing_factors": [
+      "TOKEN_NOT_BOUND_TO_DEVICE",
+      "EXCESSIVE_OAUTH_SCOPE",
+      "NO_STEP_UP_AUTH"
+    ],
+    "excessive_oauth_scope": {"token": "oauth-77", "scope": "payments:admin"}
+  },
+  "blast_radius": {
+    "reachable_resources": 7,
+    "sensitive_assets": 3,
+    "sensitive_nodes": ["oauth-77", "payments-svc", "customers-db"],
+    "reachable_nodes": [
+      "helpdeskpro",
+      "crm",
+      "email",
+      "oauth-77",
+      "orders-api",
+      "payments-svc",
+      "customers-db"
+    ],
+    "synthetic": true
+  },
+  "policy": {
+    "normal": {"source": "tok-9f2", "target": "helpdeskpro", "allowed": true},
+    "revoked": {"source": "tok-9f2", "target": "helpdeskpro", "reason": "TOKEN_REVOKED"}
+  },
+  "remediations": {
+    "rem-1": {"kind": "revoke_token", "target": "tok-9f2", "expected_break_step": 2, "status": "PATH_BROKEN"},
+    "rem-2": {"kind": "reduce_scope", "target": "oauth-77", "remove_scope": "payments:admin", "expected_break_step": 6, "status": "PATH_BROKEN"},
+    "rem-3": {"kind": "require_step_up_auth", "target": "oauth-grants"}
+  },
+  "invariants": {
+    "events_count_min": 30,
+    "original_environment_unmutated_by_apply_remediation": true,
+    "explain_is_deterministic_no_network": true
+  }
+}
